@@ -1,0 +1,68 @@
+class Solution {
+    private int[] result;
+    private boolean[] used;
+    private int n;
+    
+    public int[] constructDistancedSequence(int n) {
+        this.n = n;
+        int len = 2 * n - 1;  // Length of the sequence
+        result = new int[len];
+        used = new boolean[n + 1];  // Track used numbers
+        
+        // Start backtracking from index 0
+        backtrack(0);
+        
+        return result;
+    }
+    
+    private boolean backtrack(int pos) {
+        // Base case: if we've filled all positions
+        if (pos == result.length) {
+            return true;
+        }
+        
+        // If current position is already filled, move to next
+        if (result[pos] != 0) {
+            return backtrack(pos + 1);
+        }
+        
+        // Try placing numbers from largest to smallest (for lexicographically largest)
+        for (int i = n; i >= 1; i--) {
+            if (used[i]) continue;
+            
+            if (i == 1) {
+                // For number 1, we just need one position
+                if (canPlace(pos, i)) {
+                    result[pos] = i;
+                    used[i] = true;
+                    
+                    if (backtrack(pos + 1)) return true;
+                    
+                    // Backtrack
+                    result[pos] = 0;
+                    used[i] = false;
+                }
+            } else {
+                // For numbers > 1, we need two positions with distance i
+                if (canPlace(pos, i) && pos + i < result.length && result[pos + i] == 0) {
+                    result[pos] = i;
+                    result[pos + i] = i;
+                    used[i] = true;
+                    
+                    if (backtrack(pos + 1)) return true;
+                    
+                    // Backtrack
+                    result[pos] = 0;
+                    result[pos + i] = 0;
+                    used[i] = false;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    private boolean canPlace(int pos, int num) {
+        return pos < result.length && result[pos] == 0;
+    }
+}
