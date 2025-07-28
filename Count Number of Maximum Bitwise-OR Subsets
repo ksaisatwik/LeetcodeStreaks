@@ -1,0 +1,32 @@
+class Solution {
+    int count = 0;
+    int maxVal = 0;
+    
+    public int countMaxOrSubsets(int[] nums) {
+        // Compute maximum possible OR value
+        for(int num: nums) {
+            maxVal |= num;
+        }
+        
+        // Start backtracking from index 0 with initial OR 0
+        findMaxVal(nums, 0, 0);
+        return count;
+    }
+
+    private void findMaxVal(int[] nums, int index, int val) {
+        // Base case: reached end of array
+        if(index == nums.length) {
+            // Only count non-empty subsets that match max OR
+            if(val == maxVal) {
+                count++;
+            }
+            return;
+        }
+        
+        // Recursive case 1: include current number
+        findMaxVal(nums, index + 1, val | nums[index]);
+        
+        // Recursive case 2: exclude current number
+        findMaxVal(nums, index + 1, val);
+    }
+}
